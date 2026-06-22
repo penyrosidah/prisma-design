@@ -1,61 +1,28 @@
-"use client"
+"use client";
 
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  Boxes,
-  ShoppingCart,
-  Wallet,
-  Truck,
-  ArrowRight,
-  ArrowDown,
-  Database,
-  KeyRound,
-  Link2,
-} from "lucide-react"
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Boxes, ShoppingCart, Wallet, Truck, ArrowRight, ArrowDown, Database, KeyRound, Link2 } from "lucide-react";
 
 export default function DiagramPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Alur Data &amp; Diagram Database</h1>
-        <p className="mt-1 text-sm text-muted-foreground text-pretty">
-          Bagaimana data mengalir antar modul dan bagaimana tabel-tabel saling terhubung dalam satu basis data terpusat.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground text-pretty">Bagaimana data mengalir antar modul dan bagaimana tabel-tabel saling terhubung dalam satu basis data terpusat.</p>
       </div>
 
       {/* ALUR DATA ANTAR MODUL */}
       <section>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          1. Alur Data Antar Modul
-        </h2>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">1. Alur Data Antar Modul</h2>
 
         <Card className="p-5 lg:p-8">
           <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-7">
-            <FlowNode
-              className="lg:col-span-2"
-              icon={Truck}
-              tone="muted"
-              title="Pengadaan / Supplier"
-              tables={["purchase_order", "detail_po", "supplier"]}
-              note="Barang masuk dari supplier"
-            />
+            <FlowNode className="lg:col-span-2" icon={Truck} tone="muted" title="Pengadaan / Supplier" tables={["purchase_order", "detail_po", "supplier"]} note="Barang masuk dari supplier" />
             <Connector />
-            <FlowNode
-              icon={Boxes}
-              tone="primary"
-              title="Modul Inventori"
-              tables={["produk", "kategori"]}
-              note="Stok bertambah / berkurang"
-            />
+            <FlowNode icon={Boxes} tone="primary" title="Modul Inventori" tables={["produk", "kategori"]} note="Stok bertambah / berkurang" />
             <Connector />
-            <FlowNode
-              icon={ShoppingCart}
-              tone="primary"
-              title="Modul Penjualan"
-              tables={["transaksi_penjualan", "detail_penjualan"]}
-              note="Stok berkurang otomatis"
-            />
+            <FlowNode icon={ShoppingCart} tone="primary" title="Modul Penjualan" tables={["transaksi_penjualan", "detail_penjualan"]} note="Stok berkurang otomatis" />
           </div>
 
           <div className="my-2 flex justify-center lg:my-4">
@@ -65,46 +32,22 @@ export default function DiagramPage() {
           <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-7">
             <div className="hidden lg:col-span-2 lg:block" />
             <div className="hidden lg:block" />
-            <FlowNode
-              icon={Wallet}
-              tone="accent"
-              title="Modul Keuangan"
-              tables={["kas", "pengeluaran", "laporan_keuangan"]}
-              note="Kas masuk dicatat otomatis"
-            />
+            <FlowNode icon={Wallet} tone="accent" title="Modul Keuangan" tables={["kas", "pengeluaran", "laporan_keuangan"]} note="Kas masuk dicatat otomatis" />
             <Connector />
-            <FlowNode
-              className="lg:col-span-2"
-              icon={Database}
-              tone="muted"
-              title="Laporan & Dashboard"
-              tables={["laporan_keuangan"]}
-              note="Laba rugi & arus kas real-time"
-            />
+            <FlowNode className="lg:col-span-2" icon={Database} tone="muted" title="Laporan & Dashboard" tables={["laporan_keuangan"]} note="Laba rugi & arus kas real-time" />
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <FlowExplain
-              num="1"
-              text="Setiap penjualan di modul POS langsung mengurangi jumlah stok produk di modul Inventori."
-            />
-            <FlowExplain
-              num="2"
-              text="Nilai total transaksi otomatis dicatat sebagai kas masuk pada modul Keuangan."
-            />
-            <FlowExplain
-              num="3"
-              text="Data kas & pengeluaran diakumulasi menjadi laporan laba rugi yang tampil di dashboard pemilik."
-            />
+            <FlowExplain num="1" text="Setiap penjualan di modul POS langsung mengurangi jumlah stok produk di modul Inventori." />
+            <FlowExplain num="2" text="Nilai total transaksi otomatis dicatat sebagai kas masuk pada modul Keuangan." />
+            <FlowExplain num="3" text="Data kas & pengeluaran diakumulasi menjadi laporan laba rugi yang tampil di dashboard pemilik." />
           </div>
         </Card>
       </section>
 
       {/* DIAGRAM DATABASE */}
       <section>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          2. Diagram Database Sederhana
-        </h2>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">2. Diagram Database Sederhana</h2>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <DbGroup
@@ -189,55 +132,25 @@ export default function DiagramPage() {
             Relasi Kunci yang Menghubungkan Antar Modul
           </h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <RelasiItem
-              from="detail_penjualan.id_produk"
-              to="produk.id_produk"
-              desc="Penjualan menarik & mengurangi stok produk (Penjualan ↔ Inventori)"
-            />
-            <RelasiItem
-              from="kas.id_transaksi"
-              to="transaksi_penjualan.id_transaksi"
-              desc="Tiap transaksi membuat catatan kas masuk (Penjualan ↔ Keuangan)"
-            />
-            <RelasiItem
-              from="detail_po.id_produk"
-              to="produk.id_produk"
-              desc="Pembelian dari supplier menambah stok produk (Pengadaan ↔ Inventori)"
-            />
-            <RelasiItem
-              from="pengeluaran.id_kategori_biaya"
-              to="kategori_biaya.id_kategori_biaya"
-              desc="Pengeluaran dikelompokkan per kategori biaya (dalam Keuangan)"
-            />
+            <RelasiItem from="detail_penjualan.id_produk" to="produk.id_produk" desc="Penjualan menarik & mengurangi stok produk (Penjualan ↔ Inventori)" />
+            <RelasiItem from="kas.id_transaksi" to="transaksi_penjualan.id_transaksi" desc="Tiap transaksi membuat catatan kas masuk (Penjualan ↔ Keuangan)" />
+            <RelasiItem from="detail_po.id_produk" to="produk.id_produk" desc="Pembelian dari supplier menambah stok produk (Pengadaan ↔ Inventori)" />
+            <RelasiItem from="pengeluaran.id_kategori_biaya" to="kategori_biaya.id_kategori_biaya" desc="Pengeluaran dikelompokkan per kategori biaya (dalam Keuangan)" />
           </div>
         </Card>
       </section>
     </div>
-  )
+  );
 }
 
 function toneClasses(tone: "primary" | "accent" | "muted") {
-  if (tone === "primary") return { box: "border-primary/30 bg-primary/5", icon: "bg-primary/10 text-primary" }
-  if (tone === "accent") return { box: "border-accent/30 bg-accent/5", icon: "bg-accent/10 text-accent" }
-  return { box: "border-border bg-secondary/50", icon: "bg-secondary text-muted-foreground" }
+  if (tone === "primary") return { box: "border-primary/30 bg-primary/5", icon: "bg-primary/10 text-primary" };
+  if (tone === "accent") return { box: "border-accent/30 bg-accent/5", icon: "bg-accent/10 text-accent" };
+  return { box: "border-border bg-secondary/50", icon: "bg-secondary text-muted-foreground" };
 }
 
-function FlowNode({
-  icon: Icon,
-  title,
-  tables,
-  note,
-  tone,
-  className,
-}: {
-  icon: React.ElementType
-  title: string
-  tables: string[]
-  note: string
-  tone: "primary" | "accent" | "muted"
-  className?: string
-}) {
-  const c = toneClasses(tone)
+function FlowNode({ icon: Icon, title, tables, note, tone, className }: { icon: React.ElementType; title: string; tables: string[]; note: string; tone: "primary" | "accent" | "muted"; className?: string }) {
+  const c = toneClasses(tone);
   return (
     <div className={`flex flex-col rounded-xl border p-4 ${c.box} ${className ?? ""}`}>
       <div className="flex items-center gap-2">
@@ -249,16 +162,13 @@ function FlowNode({
       <p className="mt-2 text-xs text-muted-foreground">{note}</p>
       <div className="mt-3 flex flex-wrap gap-1">
         {tables.map((t) => (
-          <span
-            key={t}
-            className="rounded-md bg-card px-1.5 py-0.5 font-mono text-[10px] text-foreground ring-1 ring-border"
-          >
+          <span key={t} className="rounded-md bg-card px-1.5 py-0.5 font-mono text-[10px] text-foreground ring-1 ring-border">
             {t}
           </span>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function Connector() {
@@ -267,32 +177,20 @@ function Connector() {
       <ArrowRight className="hidden size-6 text-muted-foreground lg:block" />
       <ArrowDown className="size-5 text-muted-foreground lg:hidden" />
     </div>
-  )
+  );
 }
 
 function FlowExplain({ num, text }: { num: string; text: string }) {
   return (
     <div className="flex gap-3 rounded-lg border border-border p-3">
-      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-        {num}
-      </span>
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">{num}</span>
       <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
     </div>
-  )
+  );
 }
 
-function DbGroup({
-  title,
-  icon: Icon,
-  tone,
-  tables,
-}: {
-  title: string
-  icon: React.ElementType
-  tone: "primary" | "accent" | "muted"
-  tables: { nama: string; pk: string; fk?: string[]; cols: string[] }[]
-}) {
-  const c = toneClasses(tone)
+function DbGroup({ title, icon: Icon, tone, tables }: { title: string; icon: React.ElementType; tone: "primary" | "accent" | "muted"; tables: { nama: string; pk: string; fk?: string[]; cols: string[] }[] }) {
+  const c = toneClasses(tone);
   return (
     <Card className="gap-0 p-5">
       <div className="mb-3 flex items-center gap-2">
@@ -311,13 +209,17 @@ function DbGroup({
               <div className="flex items-center gap-1.5">
                 <KeyRound className="size-3 text-primary" />
                 <span className="font-mono text-[11px] font-medium text-foreground">{t.pk}</span>
-                <Badge variant="secondary" className="ml-auto h-4 px-1 text-[9px]">PK</Badge>
+                <Badge variant="secondary" className="ml-auto h-4 px-1 text-[9px]">
+                  PK
+                </Badge>
               </div>
               {t.fk?.map((f) => (
                 <div key={f} className="flex items-center gap-1.5">
                   <Link2 className="size-3 text-accent" />
                   <span className="font-mono text-[11px] text-muted-foreground">{f}</span>
-                  <Badge variant="secondary" className="ml-auto h-4 px-1 text-[9px]">FK</Badge>
+                  <Badge variant="secondary" className="ml-auto h-4 px-1 text-[9px]">
+                    FK
+                  </Badge>
                 </div>
               ))}
               {t.cols.map((col) => (
@@ -330,7 +232,7 @@ function DbGroup({
         ))}
       </div>
     </Card>
-  )
+  );
 }
 
 function RelasiItem({ from, to, desc }: { from: string; to: string; desc: string }) {
@@ -343,5 +245,5 @@ function RelasiItem({ from, to, desc }: { from: string; to: string; desc: string
       </div>
       <p className="mt-1.5 text-xs text-muted-foreground">{desc}</p>
     </div>
-  )
+  );
 }

@@ -1,70 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useErp } from "@/components/erp-provider"
-import { formatRupiah, KARYAWAN } from "@/lib/erp-data"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { ArrowUpRight, ArrowDownRight, Plus, TrendingUp, TrendingDown, Scale } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useErp } from "@/components/erp-provider";
+import { formatRupiah, KARYAWAN } from "@/lib/erp-data";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ArrowUpRight, ArrowDownRight, Plus, TrendingUp, TrendingDown, Scale } from "lucide-react";
+import { toast } from "sonner";
 
 export default function KeuanganPage() {
-  const {
-    kas,
-    pengeluaran,
-    kategoriBiaya,
-    tambahPengeluaran,
-    totalPemasukan,
-    totalPengeluaran,
-    labaRugi,
-  } = useErp()
-  const [open, setOpen] = useState(false)
+  const { kas, pengeluaran, kategoriBiaya, tambahPengeluaran, totalPemasukan, totalPengeluaran, labaRugi } = useErp();
+  const [open, setOpen] = useState(false);
 
   // pengeluaran per kategori
   const perKategori = kategoriBiaya.map((k) => ({
     nama: k.nama_kategori,
-    total: pengeluaran
-      .filter((p) => p.id_kategori_biaya === k.id_kategori_biaya)
-      .reduce((s, p) => s + p.jumlah, 0),
-  }))
-  const maxKat = Math.max(1, ...perKategori.map((k) => k.total))
+    total: pengeluaran.filter((p) => p.id_kategori_biaya === k.id_kategori_biaya).reduce((s, p) => s + p.jumlah, 0),
+  }));
+  const maxKat = Math.max(1, ...perKategori.map((k) => k.total));
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Modul Keuangan</h1>
-          <p className="mt-1 text-sm text-muted-foreground text-pretty">
-            Kas masuk dari penjualan tercatat otomatis. Catat pengeluaran operasional per kategori di sini.
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground text-pretty">Kas masuk dari penjualan tercatat otomatis. Catat pengeluaran operasional per kategori di sini.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger render={<Button />}>
@@ -73,9 +40,9 @@ export default function KeuanganPage() {
           <FormPengeluaran
             kategoriBiaya={kategoriBiaya}
             onSubmit={(data) => {
-              tambahPengeluaran(data)
-              toast.success("Pengeluaran tercatat & kas keluar diperbarui")
-              setOpen(false)
+              tambahPengeluaran(data);
+              toast.success("Pengeluaran tercatat & kas keluar diperbarui");
+              setOpen(false);
             }}
           />
         </Dialog>
@@ -88,18 +55,14 @@ export default function KeuanganPage() {
             <TrendingUp className="size-4" />
             <p className="text-sm font-medium">Total Pemasukan</p>
           </div>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {formatRupiah(totalPemasukan)}
-          </p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{formatRupiah(totalPemasukan)}</p>
         </Card>
         <Card className="gap-0 p-5">
           <div className="flex items-center gap-2 text-destructive">
             <TrendingDown className="size-4" />
             <p className="text-sm font-medium">Total Pengeluaran</p>
           </div>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {formatRupiah(totalPengeluaran)}
-          </p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{formatRupiah(totalPengeluaran)}</p>
         </Card>
         <Card className="gap-0 bg-primary p-5 text-primary-foreground">
           <div className="flex items-center gap-2">
@@ -133,9 +96,7 @@ export default function KeuanganPage() {
                     <TableCell className="whitespace-nowrap text-muted-foreground">{k.tanggal}</TableCell>
                     <TableCell>
                       <span className="text-foreground">{k.keterangan}</span>
-                      {k.id_transaksi && (
-                        <span className="ml-1 text-xs text-muted-foreground">(otomatis)</span>
-                      )}
+                      {k.id_transaksi && <span className="ml-1 text-xs text-muted-foreground">(otomatis)</span>}
                     </TableCell>
                     <TableCell>
                       {k.jenis === "Masuk" ? (
@@ -148,13 +109,7 @@ export default function KeuanganPage() {
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell
-                      className={
-                        k.jenis === "Masuk"
-                          ? "text-right font-medium tabular-nums text-accent"
-                          : "text-right font-medium tabular-nums text-destructive"
-                      }
-                    >
+                    <TableCell className={k.jenis === "Masuk" ? "text-right font-medium tabular-nums text-accent" : "text-right font-medium tabular-nums text-destructive"}>
                       {k.jenis === "Masuk" ? "+" : "-"}
                       {formatRupiah(k.jumlah)}
                     </TableCell>
@@ -176,10 +131,7 @@ export default function KeuanganPage() {
                   <span className="font-medium text-foreground">{formatRupiah(k.total)}</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                  <div
-                    className="h-full rounded-full bg-primary"
-                    style={{ width: `${(k.total / maxKat) * 100}%` }}
-                  />
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${(k.total / maxKat) * 100}%` }} />
                 </div>
               </div>
             ))}
@@ -197,47 +149,41 @@ export default function KeuanganPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-function FormPengeluaran({
-  kategoriBiaya,
-  onSubmit,
-}: {
-  kategoriBiaya: { id_kategori_biaya: number; nama_kategori: string }[]
-  onSubmit: (data: { id_kategori_biaya: number; karyawan: string; jumlah: number; deskripsi: string }) => void
-}) {
-  const [idKat, setIdKat] = useState(String(kategoriBiaya[0]?.id_kategori_biaya ?? 1))
-  const [karyawan, setKaryawan] = useState(KARYAWAN[0])
-  const [jumlah, setJumlah] = useState("")
-  const [deskripsi, setDeskripsi] = useState("")
+function FormPengeluaran({ kategoriBiaya, onSubmit }: { kategoriBiaya: { id_kategori_biaya: number; nama_kategori: string }[]; onSubmit: (data: { id_kategori_biaya: number; karyawan: string; jumlah: number; deskripsi: string }) => void }) {
+  const [idKat, setIdKat] = useState(String(kategoriBiaya[0]?.id_kategori_biaya ?? 1));
+  const [karyawan, setKaryawan] = useState(KARYAWAN[0]);
+  const [jumlah, setJumlah] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
 
   function submit() {
     if (!Number(jumlah)) {
-      toast.error("Jumlah pengeluaran harus diisi")
-      return
+      toast.error("Jumlah pengeluaran harus diisi");
+      return;
     }
     onSubmit({
       id_kategori_biaya: Number(idKat),
       karyawan,
       jumlah: Number(jumlah),
       deskripsi: deskripsi.trim() || "Pengeluaran operasional",
-    })
+    });
   }
 
   return (
     <DialogContent className="max-w-md">
       <DialogHeader>
         <DialogTitle>Catat Pengeluaran Operasional</DialogTitle>
-        <DialogDescription>
-          Pengeluaran dikelompokkan per kategori dan otomatis mengurangi saldo kas.
-        </DialogDescription>
+        <DialogDescription>Pengeluaran dikelompokkan per kategori dan otomatis mengurangi saldo kas.</DialogDescription>
       </DialogHeader>
       <div className="space-y-4">
         <div className="space-y-1.5">
           <Label>Kategori Biaya</Label>
           <Select value={idKat} onValueChange={(v) => setIdKat(v as string)}>
-            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               {kategoriBiaya.map((k) => (
                 <SelectItem key={k.id_kategori_biaya} value={String(k.id_kategori_biaya)}>
@@ -258,9 +204,15 @@ function FormPengeluaran({
         <div className="space-y-1.5">
           <Label>Dicatat oleh</Label>
           <Select value={karyawan} onValueChange={(v) => setKaryawan(v as string)}>
-            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {KARYAWAN.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
+              {KARYAWAN.map((x) => (
+                <SelectItem key={x} value={x}>
+                  {x}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -271,5 +223,5 @@ function FormPengeluaran({
         </Button>
       </DialogFooter>
     </DialogContent>
-  )
+  );
 }

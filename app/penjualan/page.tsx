@@ -1,101 +1,81 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useErp } from "@/components/erp-provider"
-import { formatRupiah, KARYAWAN, PELANGGAN, METODE_BAYAR, type ItemTransaksi, type TransaksiPenjualan } from "@/lib/erp-data"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Minus, Trash2, Receipt, ShoppingCart, CheckCircle2, ArrowRight } from "lucide-react"
-import { toast } from "sonner"
-import Link from "next/link"
+import { useState } from "react";
+import { useErp } from "@/components/erp-provider";
+import { formatRupiah, KARYAWAN, PELANGGAN, METODE_BAYAR, type ItemTransaksi, type TransaksiPenjualan } from "@/lib/erp-data";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Minus, Trash2, Receipt, ShoppingCart, CheckCircle2, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import Link from "next/link";
 
 export default function PenjualanPage() {
-  const { produk, transaksi, buatTransaksi } = useErp()
-  const [cart, setCart] = useState<ItemTransaksi[]>([])
-  const [pelanggan, setPelanggan] = useState(PELANGGAN[0])
-  const [karyawan, setKaryawan] = useState(KARYAWAN[0])
-  const [metode, setMetode] = useState(METODE_BAYAR[0])
-  const [nota, setNota] = useState<TransaksiPenjualan | null>(null)
+  const { produk, transaksi, buatTransaksi } = useErp();
+  const [cart, setCart] = useState<ItemTransaksi[]>([]);
+  const [pelanggan, setPelanggan] = useState(PELANGGAN[0]);
+  const [karyawan, setKaryawan] = useState(KARYAWAN[0]);
+  const [metode, setMetode] = useState(METODE_BAYAR[0]);
+  const [nota, setNota] = useState<TransaksiPenjualan | null>(null);
 
-  const total = cart.reduce((s, i) => s + i.subtotal, 0)
+  const total = cart.reduce((s, i) => s + i.subtotal, 0);
 
   function addToCart(idProduk: number) {
-    const p = produk.find((x) => x.id_produk === idProduk)
-    if (!p) return
-    const inCart = cart.find((i) => i.id_produk === idProduk)
-    const qtyInCart = inCart?.jumlah ?? 0
+    const p = produk.find((x) => x.id_produk === idProduk);
+    if (!p) return;
+    const inCart = cart.find((i) => i.id_produk === idProduk);
+    const qtyInCart = inCart?.jumlah ?? 0;
     if (qtyInCart + 1 > p.stok) {
-      toast.error(`Stok ${p.nama_produk} tidak mencukupi (sisa ${p.stok})`)
-      return
+      toast.error(`Stok ${p.nama_produk} tidak mencukupi (sisa ${p.stok})`);
+      return;
     }
     if (inCart) {
-      setCart(cart.map((i) =>
-        i.id_produk === idProduk
-          ? { ...i, jumlah: i.jumlah + 1, subtotal: (i.jumlah + 1) * i.harga_satuan }
-          : i,
-      ))
+      setCart(cart.map((i) => (i.id_produk === idProduk ? { ...i, jumlah: i.jumlah + 1, subtotal: (i.jumlah + 1) * i.harga_satuan } : i)));
     } else {
-      setCart([
-        ...cart,
-        { id_produk: p.id_produk, nama_produk: p.nama_produk, jumlah: 1, harga_satuan: p.harga_jual, subtotal: p.harga_jual },
-      ])
+      setCart([...cart, { id_produk: p.id_produk, nama_produk: p.nama_produk, jumlah: 1, harga_satuan: p.harga_jual, subtotal: p.harga_jual }]);
     }
   }
 
   function changeQty(idProduk: number, delta: number) {
-    const p = produk.find((x) => x.id_produk === idProduk)
+    const p = produk.find((x) => x.id_produk === idProduk);
     setCart((prev) =>
       prev
         .map((i) => {
-          if (i.id_produk !== idProduk) return i
-          const next = i.jumlah + delta
+          if (i.id_produk !== idProduk) return i;
+          const next = i.jumlah + delta;
           if (p && next > p.stok) {
-            toast.error(`Stok tidak mencukupi (sisa ${p.stok})`)
-            return i
+            toast.error(`Stok tidak mencukupi (sisa ${p.stok})`);
+            return i;
           }
-          return { ...i, jumlah: next, subtotal: next * i.harga_satuan }
+          return { ...i, jumlah: next, subtotal: next * i.harga_satuan };
         })
         .filter((i) => i.jumlah > 0),
-    )
+    );
   }
 
   function proses() {
     if (cart.length === 0) {
-      toast.error("Keranjang masih kosong")
-      return
+      toast.error("Keranjang masih kosong");
+      return;
     }
-    const trx = buatTransaksi({ pelanggan, karyawan, metode_bayar: metode, items: cart })
-    setNota(trx)
-    setCart([])
+    const trx = buatTransaksi({ pelanggan, karyawan, metode_bayar: metode, items: cart });
+    setNota(trx);
+    setCart([]);
     toast.success("Transaksi berhasil — stok & kas diperbarui otomatis", {
       description: `Nota #${trx.id_transaksi} dibuat.`,
-    })
+    });
   }
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Modul Penjualan (POS)</h1>
-        <p className="mt-1 text-sm text-muted-foreground text-pretty">
-          Proses transaksi penjualan. Saat transaksi diproses, stok berkurang dan kas masuk tercatat otomatis.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground text-pretty">Proses transaksi penjualan. Saat transaksi diproses, stok berkurang dan kas masuk tercatat otomatis.</p>
       </div>
 
       <Tabs defaultValue="kasir">
@@ -117,7 +97,7 @@ export default function PenjualanPage() {
                 <h2 className="text-sm font-semibold text-foreground">Pilih Produk</h2>
                 <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {produk.map((p) => {
-                    const habis = p.stok <= 0
+                    const habis = p.stok <= 0;
                     return (
                       <button
                         key={p.id_produk}
@@ -139,7 +119,7 @@ export default function PenjualanPage() {
                           </span>
                         )}
                       </button>
-                    )
+                    );
                   })}
                 </div>
               </Card>
@@ -155,18 +135,30 @@ export default function PenjualanPage() {
                     <div className="space-y-1.5">
                       <Label className="text-xs">Pelanggan</Label>
                       <Select value={pelanggan} onValueChange={(v) => setPelanggan(v as string)}>
-                        <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
                         <SelectContent>
-                          {PELANGGAN.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
+                          {PELANGGAN.map((x) => (
+                            <SelectItem key={x} value={x}>
+                              {x}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs">Kasir</Label>
                       <Select value={karyawan} onValueChange={(v) => setKaryawan(v as string)}>
-                        <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
                         <SelectContent>
-                          {KARYAWAN.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
+                          {KARYAWAN.map((x) => (
+                            <SelectItem key={x} value={x}>
+                              {x}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -175,9 +167,7 @@ export default function PenjualanPage() {
                   <Separator />
 
                   {cart.length === 0 ? (
-                    <p className="py-6 text-center text-sm text-muted-foreground">
-                      Belum ada item. Pilih produk di sebelah kiri.
-                    </p>
+                    <p className="py-6 text-center text-sm text-muted-foreground">Belum ada item. Pilih produk di sebelah kiri.</p>
                   ) : (
                     <div className="space-y-2">
                       {cart.map((i) => (
@@ -208,9 +198,15 @@ export default function PenjualanPage() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Metode Bayar</Label>
                     <Select value={metode} onValueChange={(v) => setMetode(v as string)}>
-                      <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
-                        {METODE_BAYAR.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
+                        {METODE_BAYAR.map((x) => (
+                          <SelectItem key={x} value={x}>
+                            {x}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -236,11 +232,7 @@ export default function PenjualanPage() {
             <h2 className="text-sm font-semibold text-foreground">Riwayat Transaksi</h2>
             <div className="mt-4 space-y-2">
               {transaksi.map((t) => (
-                <button
-                  key={t.id_transaksi}
-                  onClick={() => setNota(t)}
-                  className="flex w-full items-center gap-3 rounded-lg border border-border px-3 py-3 text-left hover:border-primary hover:bg-secondary/50"
-                >
+                <button key={t.id_transaksi} onClick={() => setNota(t)} className="flex w-full items-center gap-3 rounded-lg border border-border px-3 py-3 text-left hover:border-primary hover:bg-secondary/50">
                   <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Receipt className="size-4.5" />
                   </span>
@@ -334,5 +326,5 @@ export default function PenjualanPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

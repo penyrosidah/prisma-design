@@ -1,57 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useErp } from "@/components/erp-provider"
-import { formatRupiah } from "@/lib/erp-data"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Plus, PackagePlus, Search, AlertTriangle } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useErp } from "@/components/erp-provider";
+import { formatRupiah } from "@/lib/erp-data";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, PackagePlus, Search, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function InventoriPage() {
-  const { produk, kategori, tambahProduk, tambahStok } = useErp()
-  const [q, setQ] = useState("")
-  const [openTambah, setOpenTambah] = useState(false)
+  const { produk, kategori, tambahProduk, tambahStok } = useErp();
+  const [q, setQ] = useState("");
+  const [openTambah, setOpenTambah] = useState(false);
 
-  const filtered = produk.filter((p) =>
-    `${p.nama_produk} ${p.merk}`.toLowerCase().includes(q.toLowerCase()),
-  )
+  const filtered = produk.filter((p) => `${p.nama_produk} ${p.merk}`.toLowerCase().includes(q.toLowerCase()));
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Modul Inventori</h1>
-          <p className="mt-1 text-sm text-muted-foreground text-pretty">
-            Input data barang dan pantau pergerakan stok. Stok berkurang otomatis saat ada penjualan.
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground text-pretty">Input data barang dan pantau pergerakan stok. Stok berkurang otomatis saat ada penjualan.</p>
         </div>
         <Dialog open={openTambah} onOpenChange={setOpenTambah}>
           <DialogTrigger render={<Button />}>
@@ -61,9 +36,9 @@ export default function InventoriPage() {
           <FormTambahBarang
             kategori={kategori}
             onSubmit={(data) => {
-              tambahProduk(data)
-              toast.success("Barang berhasil ditambahkan ke inventori")
-              setOpenTambah(false)
+              tambahProduk(data);
+              toast.success("Barang berhasil ditambahkan ke inventori");
+              setOpenTambah(false);
             }}
           />
         </Dialog>
@@ -72,12 +47,7 @@ export default function InventoriPage() {
       {/* Pencarian */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Cari nama produk atau merk..."
-          className="pl-9"
-        />
+        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama produk atau merk..." className="pl-9" />
       </div>
 
       <Card className="overflow-hidden p-0">
@@ -96,8 +66,8 @@ export default function InventoriPage() {
             </TableHeader>
             <TableBody>
               {filtered.map((p) => {
-                const menipis = p.stok <= p.stok_minimum
-                const namaKat = kategori.find((k) => k.id_kategori === p.id_kategori)?.nama_kategori
+                const menipis = p.stok <= p.stok_minimum;
+                const namaKat = kategori.find((k) => k.id_kategori === p.id_kategori)?.nama_kategori;
                 return (
                   <TableRow key={p.id_produk}>
                     <TableCell>
@@ -105,12 +75,8 @@ export default function InventoriPage() {
                       <p className="text-xs text-muted-foreground">{p.merk}</p>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{namaKat}</TableCell>
-                    <TableCell className="text-right tabular-nums text-muted-foreground">
-                      {formatRupiah(p.harga_beli)}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums font-medium">
-                      {formatRupiah(p.harga_jual)}
-                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-muted-foreground">{formatRupiah(p.harga_beli)}</TableCell>
+                    <TableCell className="text-right tabular-nums font-medium">{formatRupiah(p.harga_jual)}</TableCell>
                     <TableCell className="text-center">
                       <span className="font-semibold tabular-nums">{p.stok}</span>
                       <span className="text-xs text-muted-foreground"> / min {p.stok_minimum}</span>
@@ -132,8 +98,8 @@ export default function InventoriPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          tambahStok(p.id_produk, 5)
-                          toast.success(`Stok ${p.nama_produk} +5 (barang masuk dari supplier)`)
+                          tambahStok(p.id_produk, 5);
+                          toast.success(`Stok ${p.nama_produk} +5 (barang masuk dari supplier)`);
                         }}
                       >
                         <PackagePlus className="size-3.5" />
@@ -141,7 +107,7 @@ export default function InventoriPage() {
                       </Button>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
               {filtered.length === 0 && (
                 <TableRow>
@@ -156,42 +122,32 @@ export default function InventoriPage() {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Catatan alur: tombol <span className="font-medium text-foreground">Barang Masuk</span> menambah
-        stok (simulasi penerimaan dari supplier), sedangkan setiap transaksi di modul{" "}
-        <span className="font-medium text-foreground">Penjualan</span> akan mengurangi stok produk ini
-        secara otomatis.
+        Catatan alur: tombol <span className="font-medium text-foreground">Barang Masuk</span> menambah stok (simulasi penerimaan dari supplier), sedangkan setiap transaksi di modul{" "}
+        <span className="font-medium text-foreground">Penjualan</span> akan mengurangi stok produk ini secara otomatis.
       </p>
     </div>
-  )
+  );
 }
 
 function FormTambahBarang({
   kategori,
   onSubmit,
 }: {
-  kategori: { id_kategori: number; nama_kategori: string }[]
-  onSubmit: (data: {
-    id_kategori: number
-    nama_produk: string
-    merk: string
-    stok: number
-    stok_minimum: number
-    harga_jual: number
-    harga_beli: number
-  }) => void
+  kategori: { id_kategori: number; nama_kategori: string }[];
+  onSubmit: (data: { id_kategori: number; nama_produk: string; merk: string; stok: number; stok_minimum: number; harga_jual: number; harga_beli: number }) => void;
 }) {
-  const [nama, setNama] = useState("")
-  const [merk, setMerk] = useState("")
-  const [idKat, setIdKat] = useState<string>(String(kategori[0]?.id_kategori ?? 1))
-  const [stok, setStok] = useState("")
-  const [stokMin, setStokMin] = useState("")
-  const [hargaBeli, setHargaBeli] = useState("")
-  const [hargaJual, setHargaJual] = useState("")
+  const [nama, setNama] = useState("");
+  const [merk, setMerk] = useState("");
+  const [idKat, setIdKat] = useState<string>(String(kategori[0]?.id_kategori ?? 1));
+  const [stok, setStok] = useState("");
+  const [stokMin, setStokMin] = useState("");
+  const [hargaBeli, setHargaBeli] = useState("");
+  const [hargaJual, setHargaJual] = useState("");
 
   function submit() {
     if (!nama.trim()) {
-      toast.error("Nama produk wajib diisi")
-      return
+      toast.error("Nama produk wajib diisi");
+      return;
     }
     onSubmit({
       id_kategori: Number(idKat),
@@ -201,16 +157,14 @@ function FormTambahBarang({
       stok_minimum: Number(stokMin) || 0,
       harga_jual: Number(hargaJual) || 0,
       harga_beli: Number(hargaBeli) || 0,
-    })
+    });
   }
 
   return (
     <DialogContent className="max-w-lg">
       <DialogHeader>
         <DialogTitle>Input Data Barang</DialogTitle>
-        <DialogDescription>
-          Tambahkan produk baru ke basis data inventori terpusat.
-        </DialogDescription>
+        <DialogDescription>Tambahkan produk baru ke basis data inventori terpusat.</DialogDescription>
       </DialogHeader>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
@@ -260,5 +214,5 @@ function FormTambahBarang({
         </Button>
       </DialogFooter>
     </DialogContent>
-  )
+  );
 }
