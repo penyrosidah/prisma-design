@@ -1,0 +1,16 @@
+"use client"
+
+import { Truck, Plus, PackageCheck, Clock3 } from "lucide-react"
+import { useErp } from "@/components/erp-provider"
+import { formatRupiah } from "@/lib/erp-data"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+
+const steps = ["Draft", "Confirmed", "Waiting Product", "Received", "Completed"]
+function variant(status: string) { return status === "Received" || status === "Completed" ? "default" : status === "Draft" ? "secondary" : "outline" as const }
+export default function PurchaseOrderPage() {
+  const { purchaseOrders, terimaPurchaseOrder } = useErp()
+  return <div className="mx-auto max-w-6xl space-y-6"><div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-medium uppercase tracking-wider text-primary">Pengadaan</p><h1 className="mt-1 text-2xl font-semibold tracking-tight">Purchase Order</h1><p className="mt-1 text-sm text-muted-foreground">Pantau pengadaan barang dan penerimaan stok dari supplier.</p></div><Button variant="outline"><Plus className="size-4" /> Buat Purchase Order</Button></div><Card><CardHeader><CardTitle className="text-base">Daftar Purchase Order</CardTitle></CardHeader><CardContent className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b text-left text-xs text-muted-foreground"><th className="pb-3">Nomor</th><th className="pb-3">Tanggal</th><th className="pb-3">Supplier</th><th className="pb-3">Produk</th><th className="pb-3">Total</th><th className="pb-3">Status</th><th className="pb-3" /></tr></thead><tbody>{purchaseOrders.map((o) => <tr key={o.id} className="border-b last:border-0"><td className="py-3 font-medium">{o.id}</td><td className="py-3 text-muted-foreground">{o.tanggal}</td><td className="py-3">{o.supplier}</td><td className="py-3">{o.produk} × {o.jumlah}</td><td className="py-3 font-medium">{formatRupiah(o.total)}</td><td className="py-3"><Badge variant={variant(o.status)}>{o.status}</Badge></td><td className="py-3 text-right">{o.status !== "Received" && o.status !== "Completed" && <Button size="sm" onClick={() => { terimaPurchaseOrder(o.id); toast.success("Barang diterima, stok Lenovo IdeaPad Slim 3 bertambah 5 unit") }}><PackageCheck className="size-4" /> Terima Barang</Button>}</td></tr>)}</tbody></table></CardContent></Card><Card><CardHeader><CardTitle className="text-base">Alur Purchase Order</CardTitle></CardHeader><CardContent><div className="flex flex-wrap items-center gap-2">{steps.map((step, i) => <div key={step} className="flex items-center gap-2"><div className="flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium"><span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">{i + 1}</span>{step}</div>{i < steps.length - 1 && <span className="text-muted-foreground">→</span>}</div>)}</div><div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground"><Clock3 className="size-4" /> Penerimaan barang otomatis tersinkron ke modul Inventori. <a className="font-medium text-primary hover:underline" href="/inventori">Lihat inventori</a></div></CardContent></Card></div>
+}

@@ -7,6 +7,12 @@ import {
   type Kas,
   type Pengeluaran,
   type ItemTransaksi,
+  type SalesOrder,
+  type PurchaseOrder,
+  type SalesOrderStatus,
+  type PurchaseOrderStatus,
+  salesOrderSeed,
+  purchaseOrderSeed,
   kategoriSeed,
   produkSeed,
   transaksiSeed,
@@ -46,6 +52,12 @@ interface ErpContextValue {
   totalPengeluaran: number
   saldoKas: number
   labaRugi: number
+  salesOrders: SalesOrder[]
+  purchaseOrders: PurchaseOrder[]
+  tambahSalesOrder: (order: Omit<SalesOrder, "id" | "status">, status?: SalesOrderStatus) => void
+  konfirmasiSalesOrder: (id: string) => void
+  tambahPurchaseOrder: (order: Omit<PurchaseOrder, "id" | "status">, status?: PurchaseOrderStatus) => void
+  terimaPurchaseOrder: (id: string) => void
 }
 
 const ErpContext = createContext<ErpContextValue | null>(null)
@@ -64,6 +76,27 @@ export function ErpProvider({ children }: { children: ReactNode }) {
   const [transaksi, setTransaksi] = useState<TransaksiPenjualan[]>(transaksiSeed)
   const [kas, setKas] = useState<Kas[]>(kasSeed)
   const [pengeluaran, setPengeluaran] = useState<Pengeluaran[]>(pengeluaranSeed)
+  const [salesOrders, setSalesOrders] = useState<SalesOrder[]>(salesOrderSeed)
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(purchaseOrderSeed)
+
+  function tambahSalesOrder(order: Omit<SalesOrder, "id" | "status">, status: SalesOrderStatus = "Draft") {
+    setSalesOrders((prev) => [{ ...order, id: `SO-2026-${String(prev.length + 3).padStart(3, "0")}`, status }, ...prev])
+  }
+
+  function konfirmasiSalesOrder(id: string) {
+    setSalesOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: "Confirmed" } : o)))
+  }
+
+  function tambahPurchaseOrder(order: Omit<PurchaseOrder, "id" | "status">, status: PurchaseOrderStatus = "Draft") {
+    setPurchaseOrders((prev) => [{ ...order, id: `PO-2026-${String(prev.length + 3).padStart(3, "0")}`, status }, ...prev])
+  }
+
+  function terimaPurchaseOrder(id: string) {
+    const order = purchaseOrders.find((item) => item.id === id)
+    if (!order || order.status === "Received" || order.status === "Completed") return
+    tambahStok(order.productId, order.jumlah)
+    setPurchaseOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: "Received" } : o)))
+  }
 
   function tambahProduk(p: Omit<Produk, "id_produk">) {
     setProduk((prev) => [...prev, { ...p, id_produk: Math.max(0, ...prev.map((x) => x.id_produk)) + 1 }])
@@ -151,12 +184,18 @@ export function ErpProvider({ children }: { children: ReactNode }) {
       transaksi,
       kas,
       pengeluaran,
+      salesOrders,
+      purchaseOrders,
       kategori: kategoriSeed,
       kategoriBiaya: kategoriBiayaSeed,
       tambahProduk,
       tambahStok,
       buatTransaksi,
       tambahPengeluaran,
+      tambahSalesOrder,
+      konfirmasiSalesOrder,
+      tambahPurchaseOrder,
+      terimaPurchaseOrder,
       produkMenipis,
       totalPemasukan,
       totalPengeluaran,
@@ -164,7 +203,7 @@ export function ErpProvider({ children }: { children: ReactNode }) {
       labaRugi: totalPemasukan - totalPengeluaran,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [produk, transaksi, kas, pengeluaran])
+  }, [produk, transaksi, kas, pengeluaran, salesOrders, purchaseOrders])
 
   return <ErpContext.Provider value={value}>{children}</ErpContext.Provider>
 }

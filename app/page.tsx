@@ -15,7 +15,11 @@ import {
   ArrowRight,
   ArrowDownRight,
   ArrowUpRight,
+  BarChart3,
+  Lightbulb,
+  ArrowUp,
 } from "lucide-react"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 
 export default function DashboardPage() {
   const { produk, transaksi, produkMenipis, totalPemasukan, saldoKas, labaRugi, kas } = useErp()
@@ -201,9 +205,18 @@ export default function DashboardPage() {
           </div>
         </div>
       </Card>
+
+      <section className="space-y-4" aria-labelledby="executive-analytics">
+        <div><p className="text-xs font-medium uppercase tracking-wider text-primary">Executive view</p><h2 id="executive-analytics" className="mt-1 text-xl font-semibold">Executive Business Analytics</h2><p className="mt-1 text-sm text-muted-foreground">Ringkasan performa bisnis untuk keputusan operasional yang lebih cepat.</p></div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><AnalyticsKpi label="Revenue Growth" value="+18,4%" sub="vs bulan lalu"/><AnalyticsKpi label="Gross Margin" value="28,6%" sub="target 25%"/><AnalyticsKpi label="Inventory Value" value={formatRupiah(produk.reduce((s, p) => s + p.stok * p.harga_beli, 0))} sub="nilai modal stok"/><AnalyticsKpi label="Order Fulfillment" value="94,2%" sub="on-time delivery"/></div>
+        <div className="grid gap-4 lg:grid-cols-2"><Card className="p-5"><div className="flex items-center gap-2"><BarChart3 className="size-4 text-primary"/><h3 className="text-sm font-semibold">Sales Trend</h3></div><div className="mt-4 h-56"><ResponsiveContainer width="100%" height="100%"><BarChart data={[{name:"Jan",value:3.2},{name:"Feb",value:4.1},{name:"Mar",value:3.8},{name:"Apr",value:5.2},{name:"Mei",value:4.7},{name:"Jun",value:6.4}]}><XAxis dataKey="name" tickLine={false} axisLine={false}/><YAxis hide/><Tooltip formatter={(v) => [`Rp ${Number(v).toFixed(1)} jt`, "Revenue"]}/><Bar dataKey="value" fill="var(--primary)" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div></Card><Card className="p-5"><div className="flex items-center gap-2"><BarChart3 className="size-4 text-primary"/><h3 className="text-sm font-semibold">Top Products</h3></div><div className="mt-5 space-y-4">{produk.slice(0, 4).sort((a,b) => b.harga_jual - a.harga_jual).map((p, i) => <div key={p.id_produk}><div className="flex justify-between text-xs"><span className="truncate font-medium">{i + 1}. {p.nama_produk}</span><span className="text-muted-foreground">{p.stok} unit</span></div><div className="mt-2 h-2 rounded-full bg-secondary"><div className="h-2 rounded-full bg-primary" style={{ width: `${Math.max(18, 100 - i * 18)}%` }}/></div></div>)}</div></Card></div>
+        <div className="grid gap-4 lg:grid-cols-2"><Card className="border-destructive/20 bg-destructive/5 p-5"><div className="flex gap-3"><AlertTriangle className="size-5 shrink-0 text-destructive"/><div><h3 className="text-sm font-semibold">Stock Alert</h3><p className="mt-1 text-sm text-muted-foreground">{produkMenipis.length} produk perlu segera direstock. Fokus pada Lenovo IdeaPad Slim 3 dan Keyboard Mechanical Rexus.</p><Link href="/purchase-order" className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">Buat purchase order <ArrowRight className="size-3.5"/></Link></div></div></Card><Card className="p-5"><div className="flex gap-3"><Lightbulb className="size-5 shrink-0 text-primary"/><div><h3 className="text-sm font-semibold">Executive Insight</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">Penjualan meningkat konsisten. Tambahkan stok laptop dan prioritaskan follow-up invoice untuk menjaga arus kas.</p><div className="mt-3 flex flex-wrap gap-2"><Button size="sm" variant="outline" render={<Link href="/accounting-report"/>} nativeButton={false}>Buka accounting report</Button><Button size="sm" variant="outline" render={<Link href="/sales-order"/>} nativeButton={false}>Review sales order</Button></div></div></div></Card></div>
+      </section>
     </div>
   )
 }
+
+function AnalyticsKpi({ label, value, sub }: { label: string; value: string; sub: string }) { return <Card className="p-5"><p className="text-xs text-muted-foreground">{label}</p><div className="mt-2 flex items-center gap-2"><p className="text-xl font-semibold">{value}</p><ArrowUp className="size-4 text-accent"/></div><p className="mt-1 text-xs text-muted-foreground">{sub}</p></Card> }
 
 function MiniFin({ label, value, positive }: { label: string; value: string; positive: boolean }) {
   return (

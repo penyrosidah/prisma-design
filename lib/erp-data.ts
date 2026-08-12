@@ -60,6 +60,30 @@ export interface Pengeluaran {
   deskripsi: string
 }
 
+export type SalesOrderStatus = "Draft" | "Confirmed" | "Delivery" | "Invoice" | "Paid"
+export type PurchaseOrderStatus = "Draft" | "Confirmed" | "Waiting Product" | "Received" | "Completed"
+
+export interface SalesOrder {
+  id: string
+  tanggal: string
+  pelanggan: string
+  produk: string
+  jumlah: number
+  total: number
+  status: SalesOrderStatus
+}
+
+export interface PurchaseOrder {
+  id: string
+  tanggal: string
+  supplier: string
+  produk: string
+  jumlah: number
+  total: number
+  status: PurchaseOrderStatus
+  productId: number
+}
+
 // ============================================================
 // Data awal (seed) — mensimulasikan basis data terpusat
 // ============================================================
@@ -120,6 +144,16 @@ export const kasSeed: Kas[] = [
   { id_kas: 1, id_transaksi: 1001, tanggal: "2026-06-21", jenis: "Masuk", jumlah: 1940000, keterangan: "Penjualan #1001" },
   { id_kas: 2, id_transaksi: 1002, tanggal: "2026-06-21", jenis: "Masuk", jumlah: 2350000, keterangan: "Penjualan #1002" },
   { id_kas: 3, id_transaksi: null, tanggal: "2026-06-20", jenis: "Keluar", jumlah: 1500000, keterangan: "Sewa Tempat - Juni" },
+]
+
+export const salesOrderSeed: SalesOrder[] = [
+  { id: "SO-2026-001", tanggal: "2026-06-22", pelanggan: "Universitas Siber Asia", produk: "Printer Epson L3210", jumlah: 2, total: 4700000, status: "Confirmed" },
+  { id: "SO-2026-002", tanggal: "2026-06-22", pelanggan: "Toko Maju Jaya", produk: "Laptop ASUS Vivobook 14", jumlah: 1, total: 7850000, status: "Draft" },
+]
+
+export const purchaseOrderSeed: PurchaseOrder[] = [
+  { id: "PO-2026-001", tanggal: "2026-06-22", supplier: "PT Lenovo Indonesia", produk: "Laptop Lenovo IdeaPad Slim 3", jumlah: 5, total: 29500000, status: "Confirmed", productId: 2 },
+  { id: "PO-2026-002", tanggal: "2026-06-21", supplier: "CV Sumber Komputer", produk: "Keyboard Mechanical Rexus", jumlah: 10, total: 2950000, status: "Waiting Product", productId: 7 },
 ]
 
 export const pengeluaranSeed: Pengeluaran[] = [
