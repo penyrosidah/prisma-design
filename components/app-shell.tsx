@@ -9,6 +9,10 @@ import {
   ShoppingCart,
   Wallet,
   Database,
+  ClipboardList,
+  Truck,
+  Settings2,
+  FileSpreadsheet,
   Menu,
   X,
   Cpu,
@@ -20,6 +24,10 @@ const NAV = [
   { href: "/inventori", label: "Inventori", icon: Boxes, desc: "Modul Stok" },
   { href: "/penjualan", label: "Penjualan", icon: ShoppingCart, desc: "Modul POS" },
   { href: "/keuangan", label: "Keuangan", icon: Wallet, desc: "Modul Finance" },
+  { href: "/sales-order", label: "Sales Order", icon: ClipboardList, desc: "Penjualan B2B" },
+  { href: "/purchase-order", label: "Purchase Order", icon: Truck, desc: "Pengadaan" },
+  { href: "/accounting-report", label: "Accounting Report", icon: FileSpreadsheet, desc: "Laporan" },
+  { href: "/konfigurasi-erp", label: "Konfigurasi ERP", icon: Settings2, desc: "Pengaturan" },
   { href: "/diagram", label: "Alur & Database", icon: Database, desc: "Diagram" },
 ]
 
